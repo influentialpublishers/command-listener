@@ -1,0 +1,32 @@
+{
+  "name": "command-listener",
+  "version": "1.0.0",
+  "description": "You got a command, yo I'll run it, check out the hook whilst my router resolves it.",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/influentialpublishers/command-listener.git"
+  },
+  "keywords": [
+    "listener",
+    "command",
+    "router",
+    "rabbitmq"
+  ],
+  "author": "Nathan A Sculli <nsculli@influential.co>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/influentialpublishers/command-listener/issues"
+  },
+  "homepage": "https://github.com/influentialpublishers/command-listener#readme",
+  "eslintConfig": {
+    "extends": "influential"
+  },
+  "devDependencies": {
+    "eslint": "^3.7.1",
+    "eslint-config-influential": "^1.1.0"
+  }
+}

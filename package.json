@@ -26,6 +26,7 @@
     "extends": "influential"
   },
   "devDependencies": {
+    "ava": "^0.16.0",
     "eslint": "^3.7.1",
     "eslint-config-influential": "^1.1.0"
   }

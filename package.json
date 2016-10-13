@@ -23,11 +23,23 @@
   },
   "homepage": "https://github.com/influentialpublishers/command-listener#readme",
   "eslintConfig": {
-    "extends": "influential"
+    "parser": "babel-eslint",
+    "extends": [
+      "influential",
+      "plugin:flowtype/recommended"
+    ],
+    "plugins": [
+      "flowtype"
+    ]
   },
   "devDependencies": {
     "ava": "^0.16.0",
     "eslint": "^3.7.1",
-    "eslint-config-influential": "^1.1.0"
+    "eslint-config-influential": "^1.1.0",
+    "sinon": "^1.17.6"
+  },
+  "dependencies": {
+    "ramda": "^0.22.1",
+    "urarse": "^1.0.0"
   }
 }

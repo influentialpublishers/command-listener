@@ -5,14 +5,11 @@ check out the hook whilst my router resolves it.
 
 ```purescript
 
-import Data.Foreign
-import Data.Foreign.Class
-
 type Message =
   { id       :: String
   , command  :: String
-  , resource :: F a
-  , payload  :: F a
+  , resource :: JSON
+  , payload  :: JSON
   }
 
 

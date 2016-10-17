@@ -62,30 +62,46 @@ test('it should provide the internal handler to the event source ' +
 })
 
 
-test.cb('it should call the event_source.success method upon ' +
-'a successful handler response', t => {
-
-  t.plan(1)
-
-  const test_id = 12345
-
-  const options = {
-    route_map: {
-      test: '/helpers/handlers/basic.js@success'
-    }
-    
-  , event_source: {
-
-      listen: (handler) => handler('test', { foo: 'bar' }, { id: test_id })
-    , success: (msg, response) => {
-        t.is(msg.id, test_id)
-        t.end()
-      }
-    }
+// Generate basic test cases for the response handlers.
+//
+const response_types = [
+  { name: 'SUCCESS', handler: 'success', method: 'success' }
+, { name: 'REQUEUE', handler: 'requeue', method: 'requeue' }
+, { name: 'PRIORITY_REQUEUE'
+  , handler: 'priority'
+  , method: 'priorityRequeue'
   }
+, { name: 'FAILED', handler: 'failed', method: 'failed' }
+]
 
 
-  CommandListener(options)
+response_types.map((type) => {
 
+  test.cb(`it should call the event_source.${type.method} method ` +
+  `upon a ${type.name} handler response`, t => {
+
+      t.plan(1)
+
+      const test_id = 12345
+
+      const route_map = {
+        test: `/helpers/handlers/basic.js@${type.handler}`
+      }
+
+      const event_source = {
+
+        listen: (fn) => fn('test', { foo: 'bar' }, { id: test_id })
+
+      , [type.method]: (msg, response) => {
+
+          t.is(msg.id, test_id)
+          t.end()
+        }
+
+      }
+
+      CommandListener({ route_map, event_source })
+
+  })
 
 })

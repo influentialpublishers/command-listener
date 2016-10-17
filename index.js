@@ -1,8 +1,23 @@
-const R               = require('ramda')
+const R        = require('ramda')
 const Bluebird = require('bluebird')
-const urarse          = require('urarse')
-const assert          = require('assert')
-const ResponseHandler = require('./lib/response.js')
+const urarse   = require('urarse')
+const assert   = require('assert')
+const daggy    = require('daggy')
+
+
+const Status = daggy.taggedSum({
+  Ok              : []
+, Fail            : []
+, Requeue         : []
+, PriorityRequeue : ['p']
+})
+
+
+function run(router, message) {
+  return Bluebird.resolve(
+    router.routeAndExecute(message.command, message, Status)
+  )
+}
 
 
 function CommandListener({ route_map, event_source }) {
@@ -17,11 +32,8 @@ function CommandListener({ route_map, event_source }) {
 
   const router = urarse.init(route_map)
 
-  return event_source.listen((command, payload, msg) =>
-
-    Bluebird.resolve( router.routeAndExecute(command, payload, msg) )
-
-    .then(ResponseHandler(event_source, msg))
+  return event_source.listen((message) =>
+    run(router, message).then((status) => event_source.ack(message, status))
   )
 
 }

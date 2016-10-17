@@ -65,42 +65,50 @@ test('it should provide the internal handler to the event source ' +
 // Generate basic test cases for the response handlers.
 //
 const response_types = [
-  { name: 'SUCCESS', handler: 'success', method: 'success' }
-, { name: 'REQUEUE', handler: 'requeue', method: 'requeue' }
+  { name: 'SUCCESS', handler: 'success', status: Status.Ok }
+, { name: 'REQUEUE', handler: 'requeue', status: Status.Requeue }
 , { name: 'PRIORITY_REQUEUE'
   , handler: 'priority'
-  , method: 'priorityRequeue'
+  , status: Status.PriorityRequeue
   }
-, { name: 'FAILED', handler: 'failed', method: 'failed' }
+, { name: 'FAILED', handler: 'failed', status: Status.Fail }
 ]
 
 
 response_types.map((type) => {
 
-  test.cb(`it should call the event_source.${type.method} method ` +
-  `upon a ${type.name} handler response`, t => {
+  test.cb(`it should call the event_source.ack() method with the ` +
+  `proper status upon a ${type.name} handler response`, t => {
 
-      t.plan(1)
+    t.plan(2)
+    
+    const test_id = 12345
 
-      const test_id = 12345
+    const route_map = {
+      test: `/helpers/handlers/basic.js@${type.handler}`
+    }
 
-      const route_map = {
-        test: `/helpers/handlers/basic.js@${type.handler}`
-      }
+    const event_source = {
 
-      const event_source = {
+      listen: (fn) => fn({ command: 'test', payload: { id: test_id }})
 
-        listen: (fn) => fn('test', { foo: 'bar' }, { id: test_id })
+    , ack: (message, status) => {
+        try {
+          t.is(message.payload.id, test_id)
 
-      , [type.method]: (msg, response) => {
-
-          t.is(msg.id, test_id)
+          if (typeof type.status === 'object') {
+            t.is(status, type.status)
+          } else {
+            t.true(status instanceof type.status)
+          }
           t.end()
-        }
 
+        } catch (e) { t.end(e) }
       }
 
-      CommandListener({ route_map, event_source })
+    }
+
+    CommandListener({ route_map, event_source })
 
   })
 

@@ -2,20 +2,13 @@ const R        = require('ramda')
 const Bluebird = require('bluebird')
 const urarse   = require('urarse')
 const assert   = require('assert')
-const daggy    = require('daggy')
-
-
-const Status = daggy.taggedSum({
-  Ok              : []
-, Fail            : []
-, Requeue         : []
-, PriorityRequeue : ['p']
-})
+const Status   = require('./lib/status.js')
 
 
 function run(router, message) {
+
   return Bluebird.resolve(
-    router.routeAndExecute(message.command, message, Status)
+    router.route(message.command)( message, Status )
   )
 }
 

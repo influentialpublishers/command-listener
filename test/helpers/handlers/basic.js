@@ -1,18 +1,12 @@
 
-const R      = require('ramda')
-const Status = require('../../../lib/status.js')
 
+const success  = (m, Status) => Status.Ok
 
-const success  = (e, p) => ({ status: Status.SUCCESS })
+const requeue  = (m, Status) => Status.Requeue
 
+const priority = (m, Status) => Status.PriorityRequeue(1)
 
-const requeue  = (e, p) => ({ status: Status.REQUEUE })
-
-
-const priority = (e, p) => ({ status: Status.PRIORITY_REQUEUE })
-
-
-const failed   = (e, p) => ({ status: Status.FAILED })
+const failed   = (m, Status) => Status.Fail
 
 
 module.exports = {

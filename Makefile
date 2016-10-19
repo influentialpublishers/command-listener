@@ -10,7 +10,7 @@ test: install
 
 
 watch: install
-	${NODE_BIN}/ava --watch
+	${NODE_BIN}/ava --watch -v
 
 
 .PHONY: test

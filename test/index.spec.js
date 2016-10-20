@@ -6,13 +6,36 @@ import Status from '../lib/status.js'
 
 
 /* eslint-disable no-magic-numbers */
-test('require a route map', t => {
+test('require a handler', t => {
+
   t.plan(2)
 
-  const runner = () => CommandListener({ })
+  const event_source = {
+    listen: () => null
+  , ack: () => null
+  }
+
+  const runner = () => CommandListener(event_source)
 
   t.throws(runner, AssertionError)
-  t.throws(runner, 'route_map is required')
+  t.throws(runner, 'handler must be a function')
+
+})
+
+
+test('handler must be a function', t => {
+
+  t.plan(2)
+
+  const event_source = {
+    listen: () => null
+  , ack: () => null
+  }
+
+  const runner = () => CommandListener(event_source, {})
+
+  t.throws(runner, AssertionError)
+  t.throws(runner, 'handler must be a function')
 
 })
 
@@ -20,7 +43,7 @@ test('require a route map', t => {
 test('require an event source', t => {
   t.plan(2)
 
-  const runner = () => CommandListener({ route_map: {} })
+  const runner = () => CommandListener()
 
   t.throws(runner, AssertionError)
   t.throws(runner, 'event_source is required')
@@ -31,12 +54,7 @@ test('require an event source', t => {
 test('require event_source to have a listen function', t => {
   t.plan(2)
 
-
-  const options = {
-    route_map: {}
-  , event_source: {}
-  }
-  const runner = () => CommandListener(options)
+  const runner = () => CommandListener({})
 
   t.throws(runner, AssertionError)
   t.throws(runner, 'event_source must have a "listen" function')
@@ -49,13 +67,9 @@ test('it should provide the internal handler to the event source ' +
   t.plan(1)
 
   const listener_stub = stub()
+  const event_source  = { listen: listener_stub }
 
-  const options = {
-    route_map: {}
-  , event_source: { listen: listener_stub }
-  }
-
-  CommandListener(options)
+  CommandListener(event_source, () => null)
 
   t.truthy(listener_stub.calledOnce)
 
@@ -84,9 +98,8 @@ response_types.map((type) => {
     
     const test_id = 12345
 
-    const route_map = {
-      test: `/helpers/handlers/basic.js@${type.handler}`
-    }
+    const handler = (message, Status) =>
+      typeof type.status === 'function' ? type.status(1) : type.status
 
     const event_source = {
 
@@ -108,7 +121,7 @@ response_types.map((type) => {
 
     }
 
-    CommandListener({ route_map, event_source })
+    CommandListener(event_source, handler)
 
   })
 

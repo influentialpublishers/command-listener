@@ -28,8 +28,8 @@ function CommandListener(event_source, handler) {
   )
 
   return event_source.listen((message) =>
-    handler(message, Status).then((status) =>
-        event_source.ack(message, status))
+    Bluebird.resolve(handler(message, Status)).then((status) =>
+      event_source.ack(message, status))
   )
 
 }

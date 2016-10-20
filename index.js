@@ -3,6 +3,7 @@ const Bluebird = require('bluebird')
 const urarse   = require('urarse')
 const assert   = require('assert')
 const Status   = require('./lib/status.js')
+const RabbitMQ = require('./lib/event-source/rabbitmq.js')
 
 
 function run(router, message) {
@@ -32,6 +33,11 @@ function CommandListener(event_source, handler) {
       event_source.ack(message, status))
   )
 
+}
+
+
+CommandListener.EventSource = {
+  RabbitMQ
 }
 
 

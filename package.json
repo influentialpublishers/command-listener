@@ -1,6 +1,6 @@
 {
   "name": "command-listener",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "You got a command, yo I'll run it, check out the hook whilst my router resolves it.",
   "main": "index.js",
   "scripts": {
